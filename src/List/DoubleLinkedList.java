@@ -129,7 +129,15 @@ public class DoubleLinkedList<T extends Comparable<T>> implements Iterable<T>, M
 
     @Override
     public boolean RemoveAll(T value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         try {
+            IsEmpty();
+            while (IsThere(head, value)) {
+                Remove(value);
+            }
+            return true;
+        } catch (IsEmptyException e) {
+            return false;
+        }
     }
 
     @Override
