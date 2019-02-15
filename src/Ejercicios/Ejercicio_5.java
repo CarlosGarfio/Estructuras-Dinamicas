@@ -1,13 +1,13 @@
 package Ejercicios;
 
-import List.LinkedList;
+import List.Metodos;
 import Node.Node;
 
 public class Ejercicio_5<T extends Comparable<T>> {
 
     private T maximo = null;
 
-    public T Maximo(LinkedList<T> list) {
+    public T Maximo(Metodos<T> list) {
         maximo = list.GetElementAt(0).getValue();
         Maximo(list.GetElementAt(0));
         return maximo;

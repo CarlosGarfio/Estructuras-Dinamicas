@@ -5,13 +5,13 @@ import Ejercicios.Ejercicio_2;
 import Ejercicios.Ejercicio_3;
 import Ejercicios.Ejercicio_4;
 import Ejercicios.Ejercicio_5;
-import List.DoubleLinkedList;
+import List.LinkedList;
 import List.Metodos;
 
-public class App {
-
-    static DoubleLinkedList<Integer> X = new DoubleLinkedList<>();
-    static DoubleLinkedList<Integer> Y = new DoubleLinkedList<>();
+public class mainSimple {
+    
+    static LinkedList<Integer> X = new LinkedList<>();
+    static LinkedList<Integer> Y = new LinkedList<>();
 
     static Ejercicio_1<Integer> e1 = new Ejercicio_1<>();
     static Ejercicio_2<Integer> e2 = new Ejercicio_2<>();

@@ -1,13 +1,13 @@
 package Ejercicios;
 
-import List.LinkedList;
+import List.Metodos;
 import Node.Node;
 
 public class Ejercicio_4<T extends Comparable<T>> {
 
     static private long suma = 0;
 
-    public long Suma(LinkedList<Integer> list) {
+    public long Suma(Metodos<Integer> list) {
         suma = 0;
         if (list.GetElementAt(0) != null)
             Suma(list.GetElementAt(0));

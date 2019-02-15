@@ -1,13 +1,13 @@
 package Ejercicios;
 
-import List.LinkedList;
+import List.Metodos;
 import Node.Node;
 
 public class Ejercicio_3<T extends Comparable<T>> {
 
     static private int count = 0;
 
-    public int Ocurrencia(T value, LinkedList<T> list) {
+    public int Ocurrencia(T value, Metodos<T> list) {
         if (list.GetElementAt(0) != null) {
             Ocurrencia(value, list.GetElementAt(0));
         }

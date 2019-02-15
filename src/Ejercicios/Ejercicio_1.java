@@ -1,11 +1,11 @@
 package Ejercicios;
 
-import List.LinkedList;
+import List.Metodos;
 import Node.Node;
 
 public class Ejercicio_1<T extends Comparable<T>> {
 
-    public boolean SonIguales(LinkedList<T> x, LinkedList<T> y) {
+    public boolean SonIguales(Metodos<T> x, Metodos<T> y) {
         if (x.Length() != y.Length()) {
             return false;
         } else {

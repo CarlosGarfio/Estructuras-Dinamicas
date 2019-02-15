@@ -1,11 +1,11 @@
 package Ejercicios;
 
-import List.LinkedList;
+import List.Metodos;
 import Node.Node;
 
 public class Ejercicio_2<T extends Comparable<T>> {
 
-    public boolean ExisteElemento(T value, LinkedList<T> list) {
+    public boolean ExisteElemento(T value, Metodos<T> list) {
         if (ExisteElemento(value, list.GetElementAt(0))) {
             return true;
         } else {
