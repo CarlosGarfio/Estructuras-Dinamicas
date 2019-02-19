@@ -81,6 +81,18 @@ public class QueueMain<T extends Comparable<T>> implements Queue<T>, Iterable<T>
 
     @Override
     public Iterator<T> iterator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new Iterator<T>() {
+        int _count=count;
+        int _front=front;
+            @Override
+            public boolean hasNext() {
+                return (_count-- != 0);
+            }
+
+            @Override
+            public T next() {
+                return queue[++_front % size];
+            }
+        };
     }
 }
