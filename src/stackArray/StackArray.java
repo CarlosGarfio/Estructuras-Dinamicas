@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 import stack.Stack;
 
-public class StackArray<T> implements Stack<T>, Iterable<T>, Comparable<T>, Comparator<T> {
+public class StackArray<T> implements Stack<T>, Iterable<T> {
 
     private T[] stack = null;
     private Class<T> type = null;
@@ -66,8 +66,9 @@ public class StackArray<T> implements Stack<T>, Iterable<T>, Comparable<T>, Comp
             isEmpty();
         } catch (IsEmptyException e) {
             throw new IsEmptyException(e.getMessage());
+        }finally{
+            return stack[tope--];
         }
-        return stack[tope--];
     }
 
     @Override
@@ -100,7 +101,7 @@ public class StackArray<T> implements Stack<T>, Iterable<T>, Comparable<T>, Comp
             int epot=tope;
             @Override
             public boolean hasNext() {
-                return (epot != -1)?true:false;
+                return (epot != -1);
             }
 
             @Override
@@ -108,19 +109,7 @@ public class StackArray<T> implements Stack<T>, Iterable<T>, Comparable<T>, Comp
                 return stack[epot--];
             }
         };
-    }
-
-    @Override
-    public int compareTo(T arg0) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public int compare(T arg0, T arg1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    
+    }   
 
     public static void main(String[] args) {
         StackArray<Double> pila = new StackArray<>(Double.class, 3);

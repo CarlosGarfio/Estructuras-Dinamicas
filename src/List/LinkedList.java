@@ -242,7 +242,11 @@ public class LinkedList<T extends Comparable<T>> implements Iterable<T>, Metodos
     }
 
     @Override
-    public Node<T> GetLastElement(Node<T> tmp) {
+    public T GetLastElement() {
+        return GetLastElement(head).getValue();
+    }
+
+    private Node<T> GetLastElement(Node<T> tmp){
         if (tmp.getNext() == null) {
             return tmp;
         } else {

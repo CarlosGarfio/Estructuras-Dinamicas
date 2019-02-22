@@ -12,7 +12,7 @@ public class DoubleLinkedList<T extends Comparable<T>> implements Iterable<T>, M
     public DoubleLinkedList() {
         this.head = new Node<>();
         this.tail = new Node<>();
-        lenght = 0;
+        lenght = -1;
     }
 
     @Override
@@ -266,6 +266,8 @@ public class DoubleLinkedList<T extends Comparable<T>> implements Iterable<T>, M
     public Node<T> GetElementAt(int value) {
         return GetElementAt(head, 0, value);
     }
+    
+    
 
     private Node<T> GetElementAt(Node<T> node, int i, int value) {
         if (node.getNext() == null) {
@@ -318,14 +320,18 @@ public class DoubleLinkedList<T extends Comparable<T>> implements Iterable<T>, M
     }
 
     @Override
-    public Node<T> GetLastElement(Node<T> tmp) {
-        if (tail.getBack() == null) {
-            return null;
-        } else {
-            return tail.getBack();
-        }
+    public T GetLastElement() {
+        return GetLastElement(tail).getValue();
     }
 
+    private Node<T> GetLastElement(Node<T> tmp){
+        if (tmp.getBack() == null) {
+            return null;
+        } else {
+            return tmp.getBack();
+        }
+    }
+    
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {

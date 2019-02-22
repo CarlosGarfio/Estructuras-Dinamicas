@@ -42,7 +42,7 @@ public interface Metodos<T extends Comparable<T>> {
 
     Node<T> GetPrevElement(Node<T> node, T value);
 
-    Node<T> GetLastElement(Node<T> tmp);
+    T GetLastElement();
 
     public Iterator<T> iterator();
 }
