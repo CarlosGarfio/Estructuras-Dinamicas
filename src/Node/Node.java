@@ -5,6 +5,9 @@ public class Node<T extends Comparable<T>> {
     private T value;
     private Node<T> next;
     private Node<T> back;
+    private long cont;
+    private long level;
+    
 
     public Node<T> getBack() {
         return back;
@@ -51,5 +54,22 @@ public class Node<T extends Comparable<T>> {
     public void setNext(Node<T> next) {
         this.next = next;
     }
+
+    public long getCont() {
+        return cont;
+    }
+
+    public void setCont(long cont) {
+        this.cont = cont;
+    }
+
+    public long getLevel() {
+        return level;
+    }
+
+    public void setLevel(long level) {
+        this.level = level;
+    }
+    
 
 }

@@ -6,7 +6,7 @@ import Excepciones.IsFullException;
 public class Main {
 
     public static void main(String[] args) {
-        StackDoubleLinkedList<Double> pila = new StackDoubleLinkedList<>(255L);
+        StackDoubleLinkedList<Double> pila = new StackDoubleLinkedList<>(255);
         try {
             pila.push(10d);
             pila.push(20d);

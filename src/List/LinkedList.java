@@ -7,7 +7,7 @@ import java.util.Iterator;
 public class LinkedList<T extends Comparable<T>> implements Iterable<T>, Metodos<T> {
 
     private Node<T> head;
-    private long length = 0;
+    private long length = -1;
 
     public LinkedList(Node<T> _new) {
         this();
@@ -18,9 +18,6 @@ public class LinkedList<T extends Comparable<T>> implements Iterable<T>, Metodos
         this.head = new Node<>();
     }
 
-    
-    
-    
     @Override
     public boolean Add(T value) {
         Node<T> _new = new Node<>(value);
@@ -142,9 +139,23 @@ public class LinkedList<T extends Comparable<T>> implements Iterable<T>, Metodos
         }
     }
 
+    
     @Override
     public boolean Remove(Node<T> node) {
         return Remove(node.getValue());
+    }
+    
+    public boolean RemoveFirst(){
+        try {
+            IsEmpty();
+            if(head.getNext() != null){
+                Remove(head.getNext());
+                return true;
+            }
+        } catch (IsEmptyException e) {
+            System.err.println(e.getMessage());
+        }
+        return false;
     }
 
     @Override

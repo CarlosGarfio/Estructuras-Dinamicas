@@ -10,9 +10,10 @@ import stack.Stack;
 public class StackDoubleLinkedList<T extends Comparable<T>> implements Stack<T>, Iterable<T> {
 
     private DoubleLinkedList lista = new DoubleLinkedList();
-    private long capacity = 0L;
+    private int capacity;
 
-    public StackDoubleLinkedList(long tamanno) {
+
+    public StackDoubleLinkedList(int tamanno) {
         this.capacity = tamanno;
     }
 
