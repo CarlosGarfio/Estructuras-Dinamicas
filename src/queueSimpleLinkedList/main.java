@@ -13,14 +13,21 @@ public class main {
             queue.EnQueue(30d);
             queue.EnQueue(40d);
             queue.EnQueue(50d);
-
+            
             for (Double double1 : queue) {
                 System.out.println(double1);
             }
 
             System.out.println("El proximo en sacar es: " + queue.Front());
             System.out.println("Sacando el valor " + queue.DeQueue());
-            
+            System.out.println("El ultimo valor es: "+queue.Last());
+            queue.EnQueue(60d);
+            for (Double double1 : queue) {
+                System.out.println(double1);
+            }
+            System.out.println("El proximo en sacar es: " + queue.Front());
+            System.out.println("Sacando el valor " + queue.DeQueue());
+            System.out.println("El ultimo valor es: "+queue.Last());
             for (Double double1 : queue) {
                 System.out.println(double1);
             }
