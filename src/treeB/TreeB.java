@@ -136,12 +136,35 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
 
     @Override
     public boolean remove(T value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Node<T> tmp;
+        try {
+            if((tmp=search(value))!= null){
+                return remove(value,root);
+            }
+        } catch (Exception e) {
+        }
+        return remove(value, root);
+    }
+
+    private boolean remove(T value, Node<T> root) {
+        return false;
     }
 
     @Override
-    public T search(T value) throws IsEmptyException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Node<T> search(T value) throws IsEmptyException {
+        return search(value, root);
+    }
+
+    private Node<T> search(T value, Node<T> root) {
+        if (root == null) {
+            return null;
+        } else {
+            if (root.getValue().equals(value)) {
+                return root;
+            } else {
+                return value.compareTo(root.getValue()) < 0 ? search(value, root.getBack()) : search(value, root.getNext());
+            }
+        }
     }
 
     @Override
@@ -151,6 +174,11 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
 
     @Override
     public int width() throws IsEmptyException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void lvlUpdate() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

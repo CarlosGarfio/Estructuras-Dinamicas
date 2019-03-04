@@ -1,8 +1,9 @@
 package tree;
 
 import Excepciones.IsEmptyException;
+import Node.Node;
 
-public interface Tree<T> {
+public interface Tree<T extends Comparable<T>> {
 
     boolean add(T value);
 
@@ -12,21 +13,23 @@ public interface Tree<T> {
 
     T bigger() throws IsEmptyException;
 
+    T depthFirstSearch(T value) throws IsEmptyException;
+    
     int height() throws IsEmptyException;
     
     void inOrder() throws IsEmptyException;
 
     void isEmpty() throws IsEmptyException;
     
-    T depthFirstSearch(T value) throws IsEmptyException;
-
+    void lvlUpdate();
+    
     void posOrder() throws IsEmptyException;
 
     void preOrder() throws IsEmptyException;
 
     boolean remove(T value);
 
-    T search(T value) throws IsEmptyException;
+    Node<T> search(T value) throws IsEmptyException;
 
     T smaller() throws IsEmptyException;
     
