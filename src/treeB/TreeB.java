@@ -135,18 +135,31 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
     }
 
     @Override
-    public boolean remove(T value) {
+    public boolean remove(T value) throws IsEmptyException {
         Node<T> tmp;
-        try {
-            if((tmp=search(value))!= null){
-                return remove(value,root);
-            }
-        } catch (Exception e) {
+        if ((tmp = search(value)) != null) {
+            return remove(value, root);
         }
+
         return remove(value, root);
     }
 
-    private boolean remove(T value, Node<T> root) {
+    private boolean remove(T value, Node<T> root) throws IsEmptyException {
+        if (root.getCont() > 0) {
+            root.setCont(root.getCont() - 1);
+            return true;
+        } else {
+            if (root.getNext() != null) {
+                Node<T> tmp = minor(root.getNext());
+                if (root.getBack() == null && root.getNext() != null) {
+                    root.setValue(tmp.getValue());
+                    root.setNext(null);
+                }
+            } else {
+
+            }
+
+        }
         return false;
     }
 
@@ -180,6 +193,20 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
     @Override
     public void lvlUpdate() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public T minor() throws IsEmptyException {
+        return minor(root).getValue();
+    }
+
+    @Override
+    public Node<T> minor(Node<T> node) throws IsEmptyException {
+        if (node.getBack() == null) {
+            return node;
+        } else {
+            return minor(node.getBack());
+        }
     }
 
 }
