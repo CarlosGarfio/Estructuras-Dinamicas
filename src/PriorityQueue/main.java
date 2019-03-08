@@ -15,6 +15,7 @@ public class main {
       queue.Insert(3, 1d);
       
 //queue.Random();
+queue.Remove(1);
 queue.Remove(0);
       queue.Print();
 

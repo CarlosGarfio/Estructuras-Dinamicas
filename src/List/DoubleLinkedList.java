@@ -173,12 +173,18 @@ public class DoubleLinkedList<T extends Comparable<T>> implements Iterable<T>, M
             IsEmpty();
             Node<T> tmp = head;
             if (tmp != null) {
-                if (tmp.getNext() == null && tail.getBack() == null) {
+                if (tmp.getNext().getNext() == null && tmp.getNext().getBack() == null) {
                     head.setNext(null);
                     tail.setBack(null);
+                } else if (tmp.getNext().getBack() == null) {
+                    tmp.getNext().getNext().setBack(null);
+                    head.setNext(tmp.getNext().getNext());
+                } else if (tmp.getNext().getNext() == null) {
+                    tmp.setNext(null);
+                    tail.setBack(tmp);
                 } else {
-                    tmp.getNext().setBack(null);
-                    head.setNext(tmp.getNext());
+                    tmp.setNext(tmp.getNext().getNext());
+                    tmp.getNext().setBack(tmp);
                 }
                 lenght--;
                 System.gc();
