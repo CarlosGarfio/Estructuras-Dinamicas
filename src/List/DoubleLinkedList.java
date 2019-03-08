@@ -168,6 +168,27 @@ public class DoubleLinkedList<T extends Comparable<T>> implements Iterable<T>, M
         }
     }
 
+    public boolean RemoveFirst() {
+        try {
+            IsEmpty();
+            Node<T> tmp = head;
+            if (tmp != null) {
+                if (tmp.getNext() == null && tail.getBack() == null) {
+                    head.setNext(null);
+                    tail.setBack(null);
+                } else {
+                    tmp.getNext().setBack(null);
+                    head.setNext(tmp.getNext());
+                }
+                lenght--;
+                System.gc();
+            }
+            return true;
+        } catch (IsEmptyException e) {
+            return false;
+        }
+    }
+    
     @Override
     public boolean Remove(Node<T> node) {
         return Remove(node.getValue());
@@ -242,7 +263,7 @@ public class DoubleLinkedList<T extends Comparable<T>> implements Iterable<T>, M
             return false;
         }
     }
-
+    
     private boolean RemoveBefore(Node<T> node) {
         try {
             IsEmpty();

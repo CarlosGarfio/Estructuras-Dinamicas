@@ -1,25 +1,36 @@
 package PriorityQueue;
 
 import Excepciones.IsEmptyException;
-import Excepciones.IsFullException;
-import QueueArray.QueueMain;
+import List.DoubleLinkedList;
+import java.util.ArrayList;
 
 public class PriorityQueue<T> {
 
-    static QueueMain<Double>[] a = new QueueMain[5];
-
+    ArrayList<DoubleLinkedList> queue;
+    
     enum priority {
         Muy_alta, Alta, Media, Baja, Muy_baja
     };
 
-    public static void Print() {
+    public PriorityQueue() {
+        
+        int size= priority.values().length;
+        
+        queue=new ArrayList<>(size);
+        
+        for (int i = 0; i < size; i++) {
+            queue.add(new DoubleLinkedList());
+        }
+    }
+
+    public void Print() {
         System.out.println("-----Prioridad-----");
 
-        for (int i = 0; i < a.length; i++) {
+        for (int i = 0; i < queue.size(); i++) {
             try {
-                a[i].IsEmpty();
+                queue.get(i).IsEmpty();
                 System.out.print("Prioridad " + priority.values()[i] + ": ");
-                for (Double d : a[i]) {
+                for (Object d : queue.get(i)) {
                     System.out.print("\t" + d);
                 }
                 System.out.println("");
@@ -31,49 +42,27 @@ public class PriorityQueue<T> {
 
     }
 
-    public static void Remove(int prioridad) {
-        if (prioridad >= 0 && prioridad < a.length) {
+    public void Remove(int prioridad) {
+        if (prioridad >= 0 && prioridad < queue.size()) {
             System.out.println("Limpiando la prioridad: " + priority.values()[prioridad]);
             try {
-                a[prioridad].IsEmpty();
-                System.out.println(a[prioridad].DeQueue());
+                queue.get(prioridad).IsEmpty();
+                System.out.println(queue.get(prioridad).RemoveFirst());
             } catch (IsEmptyException e) {
                 System.out.println("La prioridad " + priority.values()[prioridad] + " esta vacia.");
             }
         }
     }
-
-    public static void Insert(int priority, double dato) {
-        try {
-            a[priority].EnQueue(dato);
-        } catch (IsFullException e) {
-            System.err.println(e.getMessage());
-        }
+     
+    public void Insert(int priority, double dato) {
+        queue.get(priority).Add(dato);
     }
 
-    public static void Init() {
-        for (int i = 0; i < a.length; i++) {
-            a[i] = new QueueMain<>(Double.class, 100);
-        }
-    }
-
-    public static void Random() {
+    public void Random() {
         for (int i = 0; i < 20; i++) {
             int x = (int) (Math.random() * 5);
             double random = (double) (Math.random() * 20) + 1;
             Insert(priority.values()[x].ordinal(), random);
         }
-    }
-
-    public static void main(String[] args) {
-        Init();
-        Random();
-        Print();
-        for (int i = 0; i < 5; i++) {
-            Remove(0);
-        }
-        
-        Print();
-        //int valorEntero = Math.floor(Math.random()*(N-M+1)+M); NUMERO RANDOM
     }
 }
