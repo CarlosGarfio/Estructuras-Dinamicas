@@ -71,5 +71,9 @@ public class Node<T extends Comparable<T>> {
         this.level = level;
     }
     
+    public String getText(){
+        return this.value.toString()+" {lvl: "+this.level+", repet: "+this.cont+"}";
+    }
+    
 
 }

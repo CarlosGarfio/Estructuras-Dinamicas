@@ -21,7 +21,7 @@ public interface Tree<T extends Comparable<T>> {
 
     void isEmpty() throws IsEmptyException;
 
-    void lvlUpdate();
+    void lvlUpdate(Node<T> root,int nivel);
 
     T minor() throws IsEmptyException;
     

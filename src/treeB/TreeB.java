@@ -74,12 +74,30 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
     public T bigger() throws IsEmptyException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    int altura=0;
     @Override
     public int height() throws IsEmptyException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        heigth(root,1);
+        return altura;
+    }
+    
+    /**
+     * @param reco Arbol.
+     * @param nivel Empieza en 1.
+     */
+    private void heigth (Node reco,int nivel)    {
+        if (reco != null) { 
+            heigth (reco.getBack(),nivel+1);
+            if (nivel>altura)
+                altura=nivel;
+            heigth (reco.getNext(),nivel+1);
+        }
     }
 
+    /**
+     * @throws IsEmptyException 
+     */
     @Override
     public void inOrder() throws IsEmptyException {
         System.out.println("\nIn-Order:");
@@ -94,6 +112,9 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
         }
     }
 
+    /**
+     * @throws IsEmptyException 
+     */
     @Override
     public void isEmpty() throws IsEmptyException {
         if (root == null) {
@@ -106,6 +127,9 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * @throws IsEmptyException 
+     */
     @Override
     public void posOrder() throws IsEmptyException {
         System.out.println("\nPos-Order:");
@@ -119,7 +143,10 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
             System.out.print(root.getValue() + "{" + root.getLevel() + "," + root.getCont() + "}, ");
         }
     }
-
+    
+    /**
+     * @throws IsEmptyException 
+     */
     @Override
     public void preOrder() throws IsEmptyException {
         System.out.println("\nPre-Order:");
@@ -134,35 +161,98 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
         }
     }
 
+    /**
+     * 
+     * @param value Valor a remover.
+     * @return True or false.
+     * @throws IsEmptyException
+     */
     @Override
     public boolean remove(T value) throws IsEmptyException {
         Node<T> tmp;
-        if ((tmp = search(value)) != null) {
-            return remove(value, root);
-        }
-
-        return remove(value, root);
-    }
-
-    private boolean remove(T value, Node<T> root) throws IsEmptyException {
-        if (root.getCont() > 0) {
-            root.setCont(root.getCont() - 1);
-            return true;
-        } else {
-            if (root.getNext() != null) {
-                Node<T> tmp = minor(root.getNext());
-                if (root.getBack() == null && root.getNext() != null) {
-                    root.setValue(tmp.getValue());
-                    root.setNext(null);
+        boolean opc;
+        try {
+            if((tmp=search(value)) != null){
+                if((opc=remove(tmp))== true){
+                    return opc;
                 }
-            } else {
-
             }
-
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
         return false;
     }
 
+    private boolean remove(Node<T> node) throws IsEmptyException {
+        if (node.getCont()>0){
+            node.setCont(node.getCont()-1);
+            lvlUpdate(root,1);
+            return true;
+        }
+        Node<T>  father = hasFather(node, root, null);
+        try {
+            if (father == null) {
+                if (root.getNext()!=null){
+                    Node<T> minor = minor(root.getNext());
+                    minor.setBack(root.getBack());
+                    root = root.getNext();
+                }else {
+                    root = root.getBack();
+                }
+                System.gc();
+                return true;
+            }
+            if (node.getBack()== null && node.getNext()==null){ //soy un nodo sin hijos
+                if (node.getValue().compareTo(father.getValue())>0)
+                    father.setNext(null);
+                else
+                    father.setBack(null);
+                return true;
+            }
+            if (node.getNext()!=null &&node.getBack()==null){
+                if (node.getValue().compareTo(father.getValue())>0)
+                    father.setNext(node.getNext());
+                else
+                    father.setBack(node.getNext());
+                return true;
+            }
+            if (node.getNext()==null &&node.getBack()!=null){
+                if (node.getValue().compareTo(father.getValue())>0)
+                    father.setNext(node.getBack());
+                else
+                    father.setBack(node.getBack());
+                return true;
+            }else {
+                Node<T> minor = minor(node.getNext());
+                minor.setBack(node.getBack());
+                father.setBack(minor);
+                father.setNext(null);
+                System.gc();
+                return true;
+            }
+        } catch (IsEmptyException ex) {
+            System.err.println(ex.getMessage());
+        }finally{
+            lvlUpdate(root,1);
+        }
+        return false;
+    }
+
+    /**
+     * @param value Valor a encontrar el nodo padre.
+     * @param root Arbol.
+     * @param father El padre.
+     * @return Retorna el nodo padre.
+     */
+    private Node<T> hasFather(Node<T> value, Node<T> root, Node<T> father) {
+        return null;
+    }
+
+    /**
+     * @param value 
+     * @return
+     * @throws IsEmptyException 
+     */
     @Override
     public Node<T> search(T value) throws IsEmptyException {
         return search(value, root);
@@ -189,10 +279,19 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
     public int width() throws IsEmptyException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    /**
+     * @param root Arbol.
+     * @param nivel Empieza en 0.
+     */
     @Override
-    public void lvlUpdate() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void lvlUpdate(Node<T> root,int nivel ) {
+        if (root != null) { 
+            root.setLevel(nivel);
+            heigth (root.getBack(),nivel+1);
+            root.setLevel(nivel);
+            heigth (root.getNext(),nivel+1);
+            
+        }
     }
 
     @Override
@@ -209,4 +308,20 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
         }
     }
 
+    /**
+     * @param b Arbol.
+     * @param x Cantidad de datos a agregar.
+     * @param n Rango minimo.
+     * @param m Rango maximo.
+     */
+    public void fill(TreeB b, int x, int n, int m) {
+        for (int i = 0; i < x; i++) {
+            b.add((int) Math.abs(Math.floor(Math.random() * (n - m + 1) + m)));
+        }
+    }
+
+    @Override
+    public String toString() {
+        return TreePrinter.getTreeDisplay(root);
+    }
 }
