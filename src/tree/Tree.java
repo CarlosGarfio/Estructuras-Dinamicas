@@ -17,20 +17,17 @@ public interface Tree<T extends Comparable<T>> {
 
     void isEmpty() throws IsEmptyException;
 
-    void lvlUpdate(Node<T> root,int nivel);
+    void lvlUpdate(Node<T> root, int nivel);
 
     T minor() throws IsEmptyException;
-    
+
     Node<T> minor(Node<T> node) throws IsEmptyException;
 
     void posOrder() throws IsEmptyException;
 
     void preOrder() throws IsEmptyException;
 
-    boolean remove(T value)throws IsEmptyException;
+    boolean remove(T value) throws IsEmptyException;
 
     Node<T> search(T value) throws IsEmptyException;
-
-    int width() throws IsEmptyException;
-
 }

@@ -348,11 +348,6 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
         }
     }
 
-    @Override
-    public int width() throws IsEmptyException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     /**
      * @param root Arbol.
      * @param nivel Empieza en 0.
