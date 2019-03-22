@@ -13,8 +13,6 @@ public interface Tree<T extends Comparable<T>> {
 
     T bigger() throws IsEmptyException;
 
-    T depthFirstSearch(T value) throws IsEmptyException;
-
     int height() throws IsEmptyException;
 
     void inOrder() throws IsEmptyException;
@@ -34,8 +32,6 @@ public interface Tree<T extends Comparable<T>> {
     boolean remove(T value)throws IsEmptyException;
 
     Node<T> search(T value) throws IsEmptyException;
-
-    T smaller() throws IsEmptyException;
 
     int width() throws IsEmptyException;
 
