@@ -1,4 +1,4 @@
-package treeB;
+package bTree;
 
 import Node.Node;
 

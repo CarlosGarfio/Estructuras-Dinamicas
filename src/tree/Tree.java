@@ -7,9 +7,7 @@ public interface Tree<T extends Comparable<T>> {
 
     boolean add(T value);
 
-    void balance() throws IsEmptyException;
-
-    void beetwen(T start, T end) throws IsEmptyException;
+    long beetwen(T start, T end) throws IsEmptyException;
 
     T bigger() throws IsEmptyException;
 
