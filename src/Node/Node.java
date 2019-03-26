@@ -7,7 +7,33 @@ public class Node<T extends Comparable<T>> {
     private Node<T> back;
     private long cont;
     private long level;
-    
+    private long height;
+    private long bf;
+
+    /**
+     *
+     * @param value Valor a setear.
+     * @param next Valor siguiente.
+     * @param back Valor anterior.
+     */
+    public Node(T value, Node<T> next, Node<T> back) {
+        this.value = value;
+        this.next = next;
+        this.back = back;
+        this.level = 0l;
+    }
+
+    public Node() {
+        this.value = null;
+        this.next = null;
+        this.back = null;
+        this.level = -1l;
+    }
+
+    public Node(T value) {
+        this(value, null, null);
+
+    }
 
     public Node<T> getBack() {
         return back;
@@ -15,29 +41,6 @@ public class Node<T extends Comparable<T>> {
 
     public void setBack(Node<T> back) {
         this.back = back;
-    }
-    
-    public Node(T value, Node<T> next, Node<T> back) {
-        this.value = value;
-        this.next = next;
-        this.back = back;
-        this.level=0l;
-    }
-
-    public Node(T value, Node<T> next) {
-        this.value = value;
-        this.next = next;
-    }
-
-    public Node() {
-        this.value = null;
-        this.next = null;
-        this.back = null;
-    }
-
-    public Node(T value) {
-        this.value = value;
-
     }
 
     public T getValue() {
@@ -71,10 +74,24 @@ public class Node<T extends Comparable<T>> {
     public void setLevel(long level) {
         this.level = level;
     }
-    
-    public String getText(){
-        return this.value.toString()+" {lvl: "+this.level+", repet: "+this.cont+"}";
-    }
-    
 
+    public long getBf() {
+        return bf;
+    }
+
+    public void setBf(long bf) {
+        this.bf = bf;
+    }
+
+    public String getText() {
+        return this.value.toString() + " {L=" + this.level + ",C=" + this.cont + ",H=" + this.height + "}";
+    }
+
+    public long getHeight() {
+        return height;
+    }
+
+    public void setHeight(long height) {
+        this.height = height;
+    }
 }

@@ -430,6 +430,6 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
 
     @Override
     public String toString() {
-        return TreePrinter.getTreeDisplay(root);
+        return TreePrinter.print(root);
     }
 }

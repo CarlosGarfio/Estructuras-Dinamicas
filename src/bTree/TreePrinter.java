@@ -7,7 +7,7 @@ import java.util.*;
 
 public class TreePrinter<T extends Comparable<T>> {
 
-    public static String getTreeDisplay(Node root) {
+    public static String print(Node root) {
 
         StringBuilder sb = new StringBuilder();
         List<List<String>>  lines = new ArrayList<>();
