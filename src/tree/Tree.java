@@ -11,7 +11,7 @@ public interface Tree<T extends Comparable<T>> {
 
     T bigger() throws IsEmptyException;
 
-    int height() throws IsEmptyException;
+    long height() throws IsEmptyException;
 
     void inOrder() throws IsEmptyException;
 

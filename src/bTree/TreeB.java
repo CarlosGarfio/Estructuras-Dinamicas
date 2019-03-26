@@ -1,9 +1,7 @@
 package bTree;
 
 import Excepciones.IsEmptyException;
-import List.LinkedList;
 import Node.Node;
-import java.util.stream.Stream;
 import tree.Tree;
 
 public class TreeB<T extends Comparable<T>> implements Tree<T> {
@@ -130,7 +128,7 @@ public class TreeB<T extends Comparable<T>> implements Tree<T> {
      * @throws IsEmptyException
      */
     @Override
-    public int height() throws IsEmptyException {
+    public long height() throws IsEmptyException {
         heigth(root, 1);
         return altura;
     }

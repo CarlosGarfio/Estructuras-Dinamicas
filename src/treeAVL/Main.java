@@ -12,7 +12,9 @@ public class Main {
         tree.add(10);
         tree.add(8);
         tree.add(4);
-//        tree.remove(10);
+        tree.remove(3);
+        tree.remove(2);
+        tree.remove(4);
         System.out.println(tree.beetwen(2, 8));
         System.out.println(tree);
     }
