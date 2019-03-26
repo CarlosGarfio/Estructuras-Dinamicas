@@ -16,11 +16,12 @@ public class Node<T extends Comparable<T>> {
     public void setBack(Node<T> back) {
         this.back = back;
     }
-
+    
     public Node(T value, Node<T> next, Node<T> back) {
         this.value = value;
         this.next = next;
         this.back = back;
+        this.level=0l;
     }
 
     public Node(T value, Node<T> next) {
