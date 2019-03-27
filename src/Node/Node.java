@@ -21,6 +21,7 @@ public class Node<T extends Comparable<T>> {
         this.next = next;
         this.back = back;
         this.level = 0l;
+        this.cont = 0l;
     }
 
     public Node() {
@@ -28,6 +29,7 @@ public class Node<T extends Comparable<T>> {
         this.next = null;
         this.back = null;
         this.level = -1l;
+        this.cont=-1l;
     }
 
     public Node(T value) {

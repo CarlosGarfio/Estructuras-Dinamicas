@@ -32,101 +32,91 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
      */
     @Override
     public boolean add(T value) {
-        if (value == null) {
-            return false;
-        } else {
-            if (root.getValue() == null) {
-                root.setValue(value);
-                lvlUpdate(root, 0);
-                return true;
-            } else {
-                if (add(root, value) != null) {
-                    lvlUpdate(root, 0);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
+        return (add(root, value) != null) ? true : false;
     }
 
     private Node<T> add(Node<T> node, T value) {
         if (node == null) {
-            Node<T> nod = new Node(value);
-            nod.setCont(0l);
-            update(nod);
-            return balance(nod);
+            return new Node(value);
         }
-        int cmp = value.compareTo(node.getValue());
-        if (cmp < 0) {
-            node.setBack(add(node.getBack(), value));
-        } else if (cmp > 0) {
-            node.setNext(add(node.getNext(), value));
-        } else {
-            node.setCont(node.getCont() + 1);
+        int i = value.compareTo(node.getValue());
+        switch (i) {
+            case -1:
+                node.setBack(add(node.getBack(), value));
+                break;
+            case 0:
+                node.setCont(node.getCont() + 1);
+                break;
+            case 1:
+                node.setNext(add(node.getNext(), value));
+                break;
         }
-        update(node);
-        return balance(node);
+        node.setHeight(Math.max(height(node.getBack()), height(node.getNext())));
+        return checkBalanceAndRotate(node, value); // check balance and make rotations if neccessary
     }
 
-    private Node<T> balance(Node<T> node) {
-        if (node.getBf() == -2) {
-            if (node.getBack().getBf() <= 0) {
-                return leftLeftCase(node);
-            } else {
-                return leftRightCase(node);
-            }
-        } else if (node.getBf() == +2) {
-            if (node.getNext().getBf() >= 0) {
-                return rightRightCase(node);
-            } else {
-                return rightLeftCase(node);
-            }
+    private Node<T> checkBalanceAndRotate(Node<T> node, T value) {
+        long balance = getBalance(node); // balance = leftNode.height - rightNode.height
+
+        // left-left
+//        if (balance > 1 && data < node.getLeftNode().getData()) {
+        if (balance > 1l && value.compareTo(node.getBack().getValue()) < 0l) {
+            return rightRotation(node);
+        }
+
+        // right-right
+//        if (balance < -1 && data > node.getRightNode().getData()) {
+        if (balance < -1l && value.compareTo(node.getNext().getValue()) > 0l) {
+            return leftRotation(node);
+        }
+
+        // left-right
+//        if (balance > 1 && data > node.getLeftNode().getData()) {
+        if (balance > 1l && value.compareTo(node.getBack().getValue()) > 0l) {
+            node.setBack(leftRotation(node.getBack()));
+            return rightRotation(node);
+        }
+
+        // right-left
+//        if (balance < -1 && data < node.getRightNode().getData()) {
+        if (balance < -1l && value.compareTo(node.getNext().getValue()) < 0l) {
+            node.setNext(rightRotation(node.getNext()));
+            return leftRotation(node);
         }
         return node;
     }
 
-    private Node<T> leftLeftCase(Node<T> node) {
-        return rightRotation(node);
+    private Node<T> rightRotation(Node<T> node) { // input C
+        Node<T> newParentNode = node.getBack(); // newParentNode = B
+        Node mid = newParentNode.getNext(); // store B's right node 'mid' (B < mid < C)
+
+        newParentNode.setNext(node); // C now becomes right node of B
+        node.setBack(mid); // 'mid' now becomes left node of C
+
+        node.setHeight(Math.max(height(node.getBack()), height(node.getNext())) + 1);
+        newParentNode.setHeight(Math.max(height(newParentNode.getBack()), height(newParentNode.getNext())) + 1);
+
+        return newParentNode; // return B as the parent of A and C
     }
 
-    private Node<T> leftRightCase(Node<T> node) {
-        node.setBack(leftRotation(node.getBack()));
-        return leftLeftCase(node);
+    private Node<T> leftRotation(Node<T> node) { // input A
+        Node<T> newParentNode = node.getNext(); // newParentNode = B
+        Node<T> mid = newParentNode.getBack(); // store B's left node 'mid' (A < mid < B)
+
+        newParentNode.setBack(node); // A now becomes left node of B
+        node.setNext(mid); // 'mid' now becomes right node of A
+
+        node.setHeight(Math.max(height(node.getBack()), height(node.getNext())) + 1);
+        newParentNode.setHeight(Math.max(height(newParentNode.getBack()), height(newParentNode.getNext())) + 1);
+
+        return newParentNode; // return B as the parent of A and C
     }
 
-    private Node<T> rightRightCase(Node<T> node) {
-        return leftRotation(node);
-    }
-
-    private Node<T> rightLeftCase(Node<T> node) {
-        node.setNext(rightRotation(node.getNext()));
-        return rightRightCase(node);
-    }
-
-    private Node<T> leftRotation(Node<T> node) {
-        Node<T> newParent = node.getNext();
-        node.setNext(newParent.getBack());
-        newParent.setBack(node);
-        update(node);
-        update(newParent);
-        return newParent;
-    }
-
-    private Node<T> rightRotation(Node<T> node) {
-        Node<T> newParent = node.getBack();
-        node.setBack(newParent.getNext());
-        newParent.setNext(node);
-        update(node);
-        update(newParent);
-        return newParent;
-    }
-
-    private void update(Node<T> node) {
-        long leftNodeHeight = (node.getBack() == null) ? -1 : node.getBack().getHeight();
-        long rightNodeHeight = (node.getNext() == null) ? -1 : node.getNext().getHeight();
-        node.setHeight(1 + Math.max(leftNodeHeight, rightNodeHeight));
-        node.setBf(rightNodeHeight - leftNodeHeight);
+    long getBalance(Node<T> node) {
+        if (node == null) {
+            return 0l;
+        }
+        return height(node.getBack()) - height(node.getNext());
     }
 
     private long count;
@@ -141,7 +131,7 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
     public long beetwen(T start, T end) throws IsEmptyException {
         count = -1l;
         beetwen(root, start, end);
-        return count + 1;
+        return count;
     }
 
     /**
@@ -285,7 +275,7 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
             return false;
         }
         if (search(value) != null) {
-            root = remove(root, value);
+            remove(root, value);
             return true;
         }
         return false;
@@ -298,71 +288,7 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
      * @throws IsEmptyException
      */
     private Node<T> remove(Node<T> node, T value) throws IsEmptyException {
-        if (node == null) {
-            return null;
-        }
-        if (value.equals(node.getValue())) {
-            if (node.getCont() > 0) {
-                node.setCont(node.getCont() - 1);
-                return node;
-            }
-        }
-        int cmp = value.compareTo(node.getValue());
-        if (cmp < 0) {
-            node.setBack(remove(node.getBack(), value));
-        } else if (cmp > 0) {
-            node.setNext(remove(node.getNext(), value));
-        } else {
-            if (node.getBack() == null) {
-                return node.getNext();
-            } else if (node.getNext() == null) {
-                return node.getBack();
-            } else {
-                if (node.getBack().getHeight() > node.getNext().getHeight()) {
-                    T successorValue = findMax(node.getBack());
-                    node.setValue(successorValue);
-                    node.setBack(remove(node.getBack(), successorValue));
-                } else {
-                    T successorValue = findMin(node.getNext());
-                    node.setValue(successorValue);
-                    node.setNext(remove(node.getNext(), successorValue));
-                }
-            }
-        }
-        update(node);
-        return balance(node);
-    }
-
-    private T findMin(Node<T> node) {
-        while (node.getBack() != null) {
-            node = node.getBack();
-        }
-        return node.getValue();
-    }
-
-    private T findMax(Node<T> node) {
-        while (node.getNext() != null) {
-            node = node.getNext();
-        }
-        return node.getValue();
-    }
-
-    /**
-     *
-     * @param value Nodo del padre a buscar.
-     * @param root Recive el arbol.
-     * @param father Padre del nodo a buscar.
-     * @return Retorna el nodo padre.
-     */
-    private Node<T> hasFather(Node<T> value, Node<T> root, Node<T> father) {
-        if (value.getValue().equals(root.getValue())) {
-            return father;
-        }
-        if (value.getValue().compareTo(root.getValue()) <= -1) {
-            return hasFather(value, root.getBack(), root);
-        } else {
-            return hasFather(value, root.getNext(), root);
-        }
+        return null;
     }
 
     /**
@@ -410,9 +336,9 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
 
         }
     }
-    
-    private long altura=0l;
-    
+
+    private long altura = 0l;
+
     public long height1() throws IsEmptyException {
         heigth1(root, 0);
         return altura;
@@ -430,10 +356,8 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
             }
             heigth1(reco.getNext(), nivel + 1);
         }
-        altura=0l;
+        altura = 0l;
     }
-    
-    
 
     /**
      *
