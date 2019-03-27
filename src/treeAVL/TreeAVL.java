@@ -20,8 +20,6 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
         this.root = node;
         this.root.setCont(0L);
         this.root.setLevel(0L);
-        this.root.setHeight(0L);
-
     }
 
     /**
@@ -54,7 +52,35 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
         node.setHeight(Math.max(height(node.getBack()), height(node.getNext())));
         return checkBalanceAndRotate(node, value); // check balance and make rotations if neccessary
     }
-
+    
+    private Node<T> checkBalanceAndRotate(Node<T> node) {
+    long balance = getBalance(node);
+ 
+    // left heavy -> left-right heavy or left-left heavy
+    if (balance > 1) {
+      // if left-right: left rotation before right rotation
+      if (getBalance(node.getBack()) < 0) {
+        node.setBack(leftRotation(node.getBack()));
+      }
+ 
+      // left-left
+      return rightRotation(node);
+    }
+ 
+    // right heavy -> left-right heavy or right-right heavy
+    if (balance < -1) {
+      // if right-left: right rotation before left rotation
+      if (getBalance(node.getNext()) > 0) {
+        node.setNext(rightRotation(node.getNext()));
+      }
+ 
+      // right-right
+      return leftRotation(node);
+    }
+ 
+    return node;
+  }
+    
     private Node<T> checkBalanceAndRotate(Node<T> node, T value) {
         long balance = getBalance(node); // balance = leftNode.height - rightNode.height
 
@@ -131,7 +157,7 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
     public long beetwen(T start, T end) throws IsEmptyException {
         count = -1l;
         beetwen(root, start, end);
-        return count;
+        return count+1;
     }
 
     /**
@@ -328,35 +354,7 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
      */
     @Override
     public void lvlUpdate(Node<T> root, int nivel) {
-        if (root != null) {
-            root.setLevel(nivel);
-            heigth1(root.getBack(), nivel + 1);
-            root.setLevel(nivel);
-            heigth1(root.getNext(), nivel + 1);
-
-        }
-    }
-
-    private long altura = 0l;
-
-    public long height1() throws IsEmptyException {
-        heigth1(root, 0);
-        return altura;
-    }
-
-    /**
-     * @param reco Arbol.
-     * @param nivel Empieza en 1.
-     */
-    private void heigth1(Node reco, int nivel) {
-        if (reco != null) {
-            heigth1(reco.getBack(), nivel + 1);
-            if (nivel > altura) {
-                altura = nivel;
-            }
-            heigth1(reco.getNext(), nivel + 1);
-        }
-        altura = 0l;
+    
     }
 
     /**
