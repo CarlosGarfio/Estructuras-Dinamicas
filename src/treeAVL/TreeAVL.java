@@ -1,181 +1,178 @@
-//https://grokonez.com/java/balanced-tree-avl-tree-java
+//https://github.com/nishantroy/Data-Structures-and-Algorithms/tree/master/AVL%20Trees
 package treeAVL;
 
 import Excepciones.IsEmptyException;
-import Node.Node;
-import bTree.TreePrinter;
-import tree.Tree;
+import Node.AVLNode;
+import tree.AVLTree;
 
-public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
+public class TreeAVL<T extends Comparable<T>> implements AVLTree<T> {
 
-    private Node<T> root;
+    private AVLNode<T> root;
+    private long size;
 
     public TreeAVL(T value) {
-        this.root = new Node<>(value);
-        this.root.setCont(0L);
-        this.root.setLevel(0L);
+        add(value);
     }
 
-    public TreeAVL(Node<T> node) {
-        this.root = node;
-        this.root.setCont(0L);
-        this.root.setLevel(0L);
-    }
-
-    /**
-     *
-     * @param value Recive el valor a agregar.
-     * @return Retorna true si logra agregarlo. Retorna false si no logra
-     * agregarlo.
-     */
     @Override
     public boolean add(T value) {
-        return (add(root, value) != null) ? true : false;
+        if (value == null) {
+            return false;
+        }
+        AVLNode<T> node;
+        try {
+            if ((node = search(value)) != null) {
+                node.setCount(node.getCount() + 1);
+                size += 1l;
+                return true;
+            }
+        } catch (IsEmptyException ex) {
+            System.err.println(ex.getMessage());
+            return false;
+        }
+        node = new AVLNode<>(value);
+        if (this.size == 0) {
+            root = node;
+            size += 1l;
+            findHtBf(root);
+            return true;
+        } else {
+            add(root, node);
+            size += 1l;
+            return true;
+        }
     }
 
-    private Node<T> add(Node<T> node, T value) {
-        if (node == null) {
-            return new Node(value);
-        }
-        int i = value.compareTo(node.getValue());
-        switch (i) {
-            case -1:
-                node.setBack(add(node.getBack(), value));
-                break;
-            case 0:
-                node.setCont(node.getCont() + 1);
-                break;
-            case 1:
-                node.setNext(add(node.getNext(), value));
-                break;
-        }
-        node.setHeight(Math.max(height(node.getBack()), height(node.getNext())));
-        return checkBalanceAndRotate(node, value); // check balance and make rotations if neccessary
-    }
-    
-    private Node<T> checkBalanceAndRotate(Node<T> node) {
-    long balance = getBalance(node);
- 
-    // left heavy -> left-right heavy or left-left heavy
-    if (balance > 1) {
-      // if left-right: left rotation before right rotation
-      if (getBalance(node.getBack()) < 0) {
-        node.setBack(leftRotation(node.getBack()));
-      }
- 
-      // left-left
-      return rightRotation(node);
-    }
- 
-    // right heavy -> left-right heavy or right-right heavy
-    if (balance < -1) {
-      // if right-left: right rotation before left rotation
-      if (getBalance(node.getNext()) > 0) {
-        node.setNext(rightRotation(node.getNext()));
-      }
- 
-      // right-right
-      return leftRotation(node);
-    }
- 
-    return node;
-  }
-    
-    private Node<T> checkBalanceAndRotate(Node<T> node, T value) {
-        long balance = getBalance(node); // balance = leftNode.height - rightNode.height
-
-        // left-left
-//        if (balance > 1 && data < node.getLeftNode().getData()) {
-        if (balance > 1l && value.compareTo(node.getBack().getValue()) < 0l) {
-            return rightRotation(node);
+    private boolean add(AVLNode<T> root, AVLNode<T> node) {
+        if (root == null) {
+            return false;
         }
 
-        // right-right
-//        if (balance < -1 && data > node.getRightNode().getData()) {
-        if (balance < -1l && value.compareTo(node.getNext().getValue()) > 0l) {
-            return leftRotation(node);
-        }
+        T rootData = root.getValue();
+        T nodeData = node.getValue();
 
-        // left-right
-//        if (balance > 1 && data > node.getLeftNode().getData()) {
-        if (balance > 1l && value.compareTo(node.getBack().getValue()) > 0l) {
-            node.setBack(leftRotation(node.getBack()));
-            return rightRotation(node);
+        //Root is less than node to add, so added to right
+        if (rootData.compareTo(nodeData) < 0) {
+            if (root.getRight() == null) {
+                root.setRight(node);
+            } else {
+                add(root.getRight(), node);
+            }
+            //Root is greater than node to add, so added to left
+        } else if (rootData.compareTo(nodeData) > 0) {
+            if (root.getLeft() == null) {
+                root.setLeft(node);
+            } else {
+                add(root.getLeft(), node);
+            }
         }
-
-        // right-left
-//        if (balance < -1 && data < node.getRightNode().getData()) {
-        if (balance < -1l && value.compareTo(node.getNext().getValue()) < 0l) {
-            node.setNext(rightRotation(node.getNext()));
-            return leftRotation(node);
-        }
-        return node;
+        //Update balance and height
+        findHtBf(root);
+        //Restructure
+        trinodeRotate(root);
+        return true;
     }
 
-    private Node<T> rightRotation(Node<T> node) { // input C
-        Node<T> newParentNode = node.getBack(); // newParentNode = B
-        Node mid = newParentNode.getNext(); // store B's right node 'mid' (B < mid < C)
-
-        newParentNode.setNext(node); // C now becomes right node of B
-        node.setBack(mid); // 'mid' now becomes left node of C
-
-        node.setHeight(Math.max(height(node.getBack()), height(node.getNext())) + 1);
-        newParentNode.setHeight(Math.max(height(newParentNode.getBack()), height(newParentNode.getNext())) + 1);
-
-        return newParentNode; // return B as the parent of A and C
+    private void findHtBf(AVLNode<T> node) {
+        int lh = (node.getLeft() != null) ? node.getLeft().getHeight() : -1;
+        int rh = (node.getRight() != null) ? node.getRight().getHeight() : -1;
+        node.setHeight(Math.max(lh, rh) + 1);
+        node.setBalanceFactor(lh - rh);
     }
 
-    private Node<T> leftRotation(Node<T> node) { // input A
-        Node<T> newParentNode = node.getNext(); // newParentNode = B
-        Node<T> mid = newParentNode.getBack(); // store B's left node 'mid' (A < mid < B)
-
-        newParentNode.setBack(node); // A now becomes left node of B
-        node.setNext(mid); // 'mid' now becomes right node of A
-
-        node.setHeight(Math.max(height(node.getBack()), height(node.getNext())) + 1);
-        newParentNode.setHeight(Math.max(height(newParentNode.getBack()), height(newParentNode.getNext())) + 1);
-
-        return newParentNode; // return B as the parent of A and C
-    }
-
-    long getBalance(Node<T> node) {
-        if (node == null) {
-            return 0l;
+    private void trinodeRotate(AVLNode<T> node) {
+        //Tree is left heavy
+        if (node.getBalanceFactor() > 1) {
+            if (node.getLeft() != null) {
+                if (node.getLeft().getBalanceFactor() >= 0) {
+                    rightRotate(node);
+                } else if (node.getLeft().getBalanceFactor() < 0) {
+                    leftRightRotate(node);
+                }
+            }
+            //Tree is right heavy
+        } else if (node.getBalanceFactor() < -1) {
+            if (node.getRight() != null) {
+                if (node.getRight().getBalanceFactor() > 0) {
+                    rightLeftRotate(node);
+                } else if (node.getRight().getBalanceFactor() <= 0) {
+                    leftRotate(node);
+                }
+            }
         }
-        return height(node.getBack()) - height(node.getNext());
+    }
+
+    private void rightRotate(AVLNode<T> node) {
+        AVLNode<T> newNode = new AVLNode<>(node.getValue());
+        AVLNode<T> left = node.getLeft();
+
+        newNode.setRight(node.getRight());
+        newNode.setLeft(left.getRight());
+
+        node.setRight(newNode);
+        node.setValue(left.getValue());
+        node.setLeft(left.getLeft());
+        left.setLeft(null);
+
+        findHtBfSub(node);
+
+    }
+
+    private void leftRotate(AVLNode<T> node) {
+        T origData = node.getValue();
+        AVLNode<T> right = node.getRight();
+        AVLNode<T> newNode = new AVLNode<>(origData);
+
+        newNode.setLeft(node.getLeft());
+        newNode.setRight(right.getLeft());
+
+        node.setLeft(newNode);
+        node.setValue(right.getValue());
+        node.setRight(right.getRight());
+        right.setRight(null);
+
+        findHtBfSub(node);
+    }
+
+    private void leftRightRotate(AVLNode<T> node) {
+        leftRotate(node.getLeft());
+        rightRotate(node);
+    }
+
+    private void rightLeftRotate(AVLNode<T> node) {
+        rightRotate(node.getRight());
+        leftRotate(node);
+    }
+
+    private void findHtBfSub(AVLNode<T> root) {
+        if (root.getLeft() != null) {
+            findHtBfSub(root.getLeft());
+        }
+        if (root.getRight() != null) {
+            findHtBfSub(root.getRight());
+        }
+        findHtBf(root);
     }
 
     private long count;
 
-    /**
-     * @param start Valor a iniciar.
-     * @param end Valor a terminar.
-     * @throws IsEmptyException
-     * @return Retorna la cantidad de valores que hay entre LOW y HIGH.
-     */
     @Override
     public long beetwen(T start, T end) throws IsEmptyException {
         count = -1l;
         beetwen(root, start, end);
-        return count+1;
+        return count + 1;
     }
 
-    /**
-     *
-     * @param node Recive el arbol.
-     * @param x Recive el valor minimo a buscar.
-     * @param y Recive el valor maximo a buscar.
-     */
-    private void beetwen(Node<T> node, T x, T y) {
+    private void beetwen(AVLNode<T> node, T x, T y) {
         if (node == null) {
             return;
         }
         if (node.getValue().compareTo(x) == 1) {
-            beetwen(node.getBack(), x, y);
+            beetwen(node.getLeft(), x, y);
         }
         if ((node.getValue().compareTo(x) == 0 || node.getValue().compareTo(x) == 1) && (node.getValue().compareTo(y) == 0 || node.getValue().compareTo(y) == -1)) {
-            if (node.getCont() > 0) {
-                for (int i = 0; i < node.getCont() + 1; i++) {
+            if (node.getCount() > 0) {
+                for (int i = 0; i < node.getCount() + 1; i++) {
                     count += 1l;
                 }
             } else {
@@ -183,244 +180,201 @@ public class TreeAVL<T extends Comparable<T>> implements Tree<T> {
             }
         }
         if (node.getValue().compareTo(y) == -1) {
-            beetwen(node.getNext(), x, y);
+            beetwen(node.getRight(), x, y);
         }
     }
 
-    /**
-     *
-     * @return Retorna el valor mas grande.
-     * @throws IsEmptyException
-     */
     @Override
     public T bigger() throws IsEmptyException {
         return bigger(root);
     }
 
-    /**
-     *
-     * @param node Recive el arbol.
-     * @return
-     */
-    private T bigger(Node<T> node) {
-        return node.getNext() == null ? node.getValue() : bigger(node.getNext());
+    private T bigger(AVLNode<T> node) {
+        return node.getRight() == null ? node.getValue() : bigger(node.getRight());
     }
 
-    /**
-     *
-     * @return Retorna la altura del arbol.
-     * @throws IsEmptyException
-     */
+    private int altura = 0;
+
     @Override
     public long height() throws IsEmptyException {
-        return height(root);
+        heigth(root, 1);
+        return altura;
     }
 
-    /**
-     * @param reco Arbol.
-     * @param nivel Empieza en 1.
-     */
-    private long height(Node<T> reco) {
-        return reco == null ? -1l : reco.getHeight();
+    private void heigth(AVLNode<T> reco, int nivel) {
+        if (reco != null) {
+            heigth(reco.getLeft(), nivel + 1);
+            if (nivel > altura) {
+                altura = nivel;
+            }
+            heigth(reco.getRight(), nivel + 1);
+        }
     }
 
-    /**
-     * @throws IsEmptyException
-     */
     @Override
     public void inOrder() throws IsEmptyException {
         System.out.println("\nIn-Order:");
         inOrder(root);
     }
 
-    private void inOrder(Node<T> root) {
+    private void inOrder(AVLNode<T> root) {
         if (root != null) {
-            inOrder(root.getBack());
-            System.out.print(root.getValue() + "{" + root.getLevel() + "," + root.getCont() + "}, ");
-            inOrder(root.getNext());
+            inOrder(root.getLeft());
+            System.out.print(String.format("%s (H %d, BF %d, C %d)",
+                    root.getValue(), root.getHeight(), root.getBalanceFactor(), root.getCount()) + ", ");
+            inOrder(root.getRight());
         }
+        System.out.println();
     }
 
-    /**
-     * @throws IsEmptyException
-     */
     @Override
     public void isEmpty() throws IsEmptyException {
         if (root == null) {
-            throw new IsEmptyException("Esmpty tree.");
+            throw new IsEmptyException("Empty tree.");
         }
     }
 
-    /**
-     * @throws IsEmptyException
-     */
+    @Override
+    public T minor() throws IsEmptyException {
+        return minor(root);
+    }
+    
+    private T minor(AVLNode<T> node) {
+        if (node.getLeft()== null) {
+            return node.getValue();
+        } else {
+            return minor(node.getLeft());
+        }
+    }
+
     @Override
     public void posOrder() throws IsEmptyException {
         System.out.println("\nPos-Order:");
         posOrder(root);
     }
 
-    private void posOrder(Node<T> root) {
+    private void posOrder(AVLNode<T> root) {
         if (root != null) {
-            posOrder(root.getBack());
-            posOrder(root.getNext());
-            System.out.print(root.getValue() + "{" + root.getLevel() + "," + root.getCont() + "}, ");
+            inOrder(root.getLeft());
+            inOrder(root.getRight());
+            System.out.print(String.format("%s (H %d, BF %d, C %d)",
+                    root.getValue(), root.getHeight(), root.getBalanceFactor(), root.getCount()) + ", ");
         }
+        System.out.println();
     }
 
-    /**
-     * @throws IsEmptyException
-     */
     @Override
     public void preOrder() throws IsEmptyException {
         System.out.println("\nPre-Order:");
         preOrder(root);
     }
 
-    /**
-     *
-     * @param root Recive el arbol.
-     */
-    private void preOrder(Node<T> root) {
+    private void preOrder(AVLNode<T> root) {
         if (root != null) {
-            System.out.print(root.getValue() + "{" + root.getLevel() + "," + root.getCont() + "}, ");
-            preOrder(root.getBack());
-            preOrder(root.getNext());
+            System.out.print(String.format("%s (H %d, BF %d, C %d)",
+                    root.getValue(), root.getHeight(), root.getBalanceFactor(), root.getCount()) + ", ");
+            inOrder(root.getLeft());
+            inOrder(root.getRight());
         }
+        System.out.println();
     }
 
-    /**
-     *
-     * @param value Valor a remover.
-     * @return true or false.
-     * @throws IsEmptyException
-     */
     @Override
     public boolean remove(T value) throws IsEmptyException {
         if (value == null) {
             return false;
         }
-        if (search(value) != null) {
-            remove(root, value);
-            return true;
+
+        if (search(value) == null) {
+            return false;
         }
-        return false;
+
+        if (size == 1 && root.getValue().compareTo(value) == 0) {
+            root = null;
+            size -= 1;
+            return true;
+
+        } else {
+            root = remove(root, value);
+        }
+        size -= 1;
+        return true;
     }
 
-    /**
-     *
-     * @param node Recive el nodo a borrar.
-     * @return Retorna true si logra borrar. Retorna false si no logra borralo.
-     * @throws IsEmptyException
-     */
-    private Node<T> remove(Node<T> node, T value) throws IsEmptyException {
-        return null;
+    private AVLNode<T> remove(AVLNode<T> node, T data) {
+        if (node == null) {
+            return null;
+        }
+        if (data.compareTo(node.getValue()) == 0) {
+            //node has repeated
+            AVLNode<T> replaceData = successor(node);
+            if (replaceData.getCount() == 0) {
+                if (node.getCount() > 0) {
+                    node.setCount(node.getCount() - 1);
+                } else {
+                    //leaf
+                    if (node.getLeft() == null && node.getRight() == null) {
+                        return null;
+                        //only right child
+                    } else if (node.getLeft() == null) {
+                        return node.getRight();
+                        //only left child
+                    } else if (node.getRight() == null) {
+                        return node.getLeft();
+                        //two children
+                    } else {
+                        node.setValue(replaceData.getValue());
+                        node.setCount(replaceData.getCount());
+                        node.setHeight(replaceData.getHeight());
+                        node.setRight(remove(node.getRight(), replaceData.getValue()));
+                    }
+                }
+            } else {
+                replaceData.setCount(replaceData.getCount() - 1);
+            }
+            //node to remove is in left subtree of current node
+        } else if (data.compareTo(node.getValue()) < 0) {
+            node.setLeft(remove(node.getLeft(), data));
+            //mode to remove is in right subtree of current node
+        } else {
+            node.setRight(remove(node.getRight(), data));
+        }
+        //update height and balance factor
+        findHtBf(node);
+        //restructure
+        trinodeRotate(node);
+        return node;
     }
 
-    /**
-     * @param value Recive el valor a buscar.
-     * @return Retorna el valor si se encuentra. Retorna null si no se
-     * encuentra.
-     * @throws IsEmptyException
-     */
+    private AVLNode<T> successor(AVLNode<T> node) {
+        if (node.getRight() != null) {
+            node = node.getRight();
+        }
+        if (node == null) {
+            return null;
+        }
+        AVLNode<T> left = node.getLeft();
+        if (left == null) {
+            return node;
+        } else {
+            return successor(left);
+        }
+    }
+
     @Override
-    public Node<T> search(T value) throws IsEmptyException {
+    public AVLNode<T> search(T value) throws IsEmptyException {
         return search(value, root);
     }
 
-    /**
-     *
-     * @param value Recive el valor a buscar.
-     * @param root Recive el arbol.
-     * @return Retorna el valor si se encuentra. Retorna null si no se
-     * encuentra.
-     */
-    private Node<T> search(T value, Node<T> root) {
+    private AVLNode<T> search(T value, AVLNode<T> root) {
         if (root == null) {
             return null;
         } else {
             if (root.getValue().equals(value)) {
                 return root;
             } else {
-                return value.compareTo(root.getValue()) < 0 ? search(value, root.getBack()) : search(value, root.getNext());
+                return value.compareTo(root.getValue()) < 0 ? search(value, root.getLeft()) : search(value, root.getRight());
             }
-        }
-    }
-
-    /**
-     *
-     * @param root Arbol.
-     * @param nivel Empieza en 0.
-     */
-    @Override
-    public void lvlUpdate(Node<T> root, int nivel) {
-    
-    }
-
-    /**
-     *
-     * @return Retornta el valor menor de todo el arbol.
-     * @throws IsEmptyException
-     */
-    @Override
-    public T minor() throws IsEmptyException {
-        return minor(root).getValue();
-    }
-
-    /**
-     *
-     * @param node Recive el nodo en el que se encuentra.
-     * @return Retorna el valor menor de todo el arbol.
-     * @throws IsEmptyException
-     */
-    @Override
-    public Node<T> minor(Node<T> node) throws IsEmptyException {
-        if (node.getBack() == null) {
-            return node;
-        } else {
-            return minor(node.getBack());
-        }
-    }
-
-    /**
-     *
-     * @throws IsEmptyException
-     */
-    public void printLevel() throws IsEmptyException {
-        long h = height();
-        for (int i = 1; i <= h; i++) {
-            System.out.print("Lvl " + (i - 1) + " : ");
-            printLevel(root, i);
-            System.out.println();
-        }
-    }
-
-    /**
-     *
-     * @param node Recive el nodo en el que se encuentra.
-     * @param level Recive su nivel.
-     */
-    private void printLevel(Node<T> node, int level) {
-        if (node == null) {
-            return;
-        }
-        if (level == 1) {
-            System.out.print(node.getValue() + " ");
-        } else if (level > 1) {
-            printLevel(node.getBack(), level - 1);
-            printLevel(node.getNext(), level - 1);
-        }
-    }
-
-    /**
-     * @param tree Arbol.
-     * @param x Cantidad de datos a agregar.
-     * @param n Rango minimo.
-     * @param m Rango maximo.
-     */
-    public void fill(TreeAVL tree, int x, int n, int m) {
-        for (int i = 0; i < x; i++) {
-            tree.add((int) Math.abs(Math.floor(Math.random() * (n - m + 1) + m)));
         }
     }
 

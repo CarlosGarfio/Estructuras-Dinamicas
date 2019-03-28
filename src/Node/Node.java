@@ -5,9 +5,9 @@ public class Node<T extends Comparable<T>> {
     private T value;
     private Node<T> next;
     private Node<T> back;
+    private Node<T> father;
     private long cont;
     private long level;
-    private long height;
     private long bf;
 
     /**
@@ -16,8 +16,9 @@ public class Node<T extends Comparable<T>> {
      * @param next Valor siguiente.
      * @param back Valor anterior.
      */
-    public Node(T value, Node<T> next, Node<T> back) {
+    public Node(T value,Node<T> father, Node<T> next, Node<T> back) {
         this.value = value;
+        this.father=father;
         this.next = next;
         this.back = back;
         this.level = 0l;
@@ -29,11 +30,11 @@ public class Node<T extends Comparable<T>> {
         this.next = null;
         this.back = null;
         this.level = -1l;
-        this.cont=-1l;
+        this.cont = -1l;
     }
 
     public Node(T value) {
-        this(value, null, null);
+        this(value,null ,null, null);
 
     }
 
@@ -86,14 +87,14 @@ public class Node<T extends Comparable<T>> {
     }
 
     public String getText() {
-        return this.value.toString() + " {L=" + this.level + ",C=" + this.cont + ",H=" + this.height + "}";
+        return this.value.toString() + " {L=" + this.level + ",C=" + this.cont + ",BF=" + this.bf + "}";
     }
 
-    public long getHeight() {
-        return height;
+    public Node<T> getFather() {
+        return father;
     }
 
-    public void setHeight(long height) {
-        this.height = height;
+    public void setFather(Node<T> father) {
+        this.father = father;
     }
 }
