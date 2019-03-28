@@ -215,6 +215,7 @@ public class TreeAVL<T extends Comparable<T>> implements AVLTree<T> {
     public void inOrder() throws IsEmptyException {
         System.out.println("\nIn-Order:");
         inOrder(root);
+        System.out.println();
     }
 
     private void inOrder(AVLNode<T> root) {
@@ -224,7 +225,6 @@ public class TreeAVL<T extends Comparable<T>> implements AVLTree<T> {
                     root.getValue(), root.getHeight(), root.getBalanceFactor(), root.getCount()) + ", ");
             inOrder(root.getRight());
         }
-        System.out.println();
     }
 
     @Override
@@ -251,6 +251,7 @@ public class TreeAVL<T extends Comparable<T>> implements AVLTree<T> {
     public void posOrder() throws IsEmptyException {
         System.out.println("\nPos-Order:");
         posOrder(root);
+        System.out.println();
     }
 
     private void posOrder(AVLNode<T> root) {
@@ -260,13 +261,14 @@ public class TreeAVL<T extends Comparable<T>> implements AVLTree<T> {
             System.out.print(String.format("%s (H %d, BF %d, C %d)",
                     root.getValue(), root.getHeight(), root.getBalanceFactor(), root.getCount()) + ", ");
         }
-        System.out.println();
     }
 
     @Override
     public void preOrder() throws IsEmptyException {
         System.out.println("\nPre-Order:");
-        preOrder(root);
+        preOrder(root);        
+        System.out.println();
+
     }
 
     private void preOrder(AVLNode<T> root) {
@@ -276,7 +278,6 @@ public class TreeAVL<T extends Comparable<T>> implements AVLTree<T> {
             inOrder(root.getLeft());
             inOrder(root.getRight());
         }
-        System.out.println();
     }
 
     @Override

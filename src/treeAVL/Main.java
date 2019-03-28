@@ -31,11 +31,13 @@ public class Main {
 //        tree.remove(7);
 //        tree.remove(8);
 //        tree.remove(15);
-//        System.out.println("\nBetween: "+tree.beetwen(-1, 2_000));
-//        System.out.println("Bigger: "+tree.bigger());
-//        System.out.println("Minor: "+tree.minor());
+        System.out.println("\nBetween: "+tree.beetwen(-1, 2_000));
+        System.out.println("Bigger: "+tree.bigger());
+        System.out.println("Minor: "+tree.minor());
         System.out.println(tree);
         tree.inOrder();
+        tree.posOrder();
+        tree.preOrder();
         System.exit(0);
     }
 }
